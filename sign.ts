@@ -123,18 +123,16 @@ export async function signTxMulti(
     userMnemonic: string,
     userAddress: string
 ): Promise<SignedTransaction> {
-    const unsignedMultisigCopy = JSON.parse(JSON.stringify(unsignedTx));
-    const unsignedMultisigCopy2 = JSON.parse(JSON.stringify(unsignedTx));
     const { privateCommitsPool, publicCommitsPool } = await a(unsignedTx);
 
     const extractedHints = await b(
-        unsignedMultisigCopy,
+        unsignedTx,
         userMnemonic,
         userAddress,
         publicCommitsPool
     );
 
-    const signedTx = await c(unsignedMultisigCopy2, privateCommitsPool, extractedHints);
+    const signedTx = await c(unsignedTx, privateCommitsPool, extractedHints);
 
     return signedTx.to_js_eip12();
 }
