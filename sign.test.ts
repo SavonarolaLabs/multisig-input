@@ -3,8 +3,7 @@ import { signTxInput } from './sign';
 import { describe, it, expect, beforeAll } from 'vitest';
 import { ProverBuilder$, ReducedInputData } from 'sigmastate-js/main';
 import bip39 from 'bip39';
-import { BlockHeader, BlockHeaders, PreHeader } from 'ergo-lib-wasm-nodejs';
-import { headers } from 'fakeContext';
+import { headers, sigmaJsHeader } from 'fakeContext';
 import { OutputBuilder, SAFE_MIN_BOX_VALUE, TransactionBuilder } from '@fleet-sdk/core';
 import { EIP12UnsignedTransaction, UnsignedTransaction } from '@fleet-sdk/common';
 
@@ -61,9 +60,9 @@ describe('UnsignedTransaction', () => {
 		expect(address).toBe('9hLjz8tcDD6iLALjcTjyHxqZu8qQQ1VkrPnWhroGbhUr8yNgiaz');
 
 		const stateCtx = {
-			sigmaLastHeaders: headers.map(h => JSON.parse(h)),
-			previousStateDigest: '',
-			sigmaPreHeader: JSON.parse(headers[0]),
+			sigmaLastHeaders: headers.map(h => JSON.parse(h)).map(sigmaJsHeader),
+			previousStateDigest: JSON.parse(headers[0]).stateRoot,
+			sigmaPreHeader: sigmaJsHeader(JSON.parse(headers[0])),
 		};
 
 		const data: ReducedInputData = prover.reduceTransactionInput(
@@ -74,6 +73,6 @@ describe('UnsignedTransaction', () => {
 			[],
 			0,
 		);
-    expect(data).toBeDefined()
+		expect(data).toBeDefined();
 	});
 });

@@ -1,3 +1,23 @@
+export function sigmaJsHeader(header:any){
+  return {
+    id: header.id,
+    version: header.version,
+    parentId: header.parentId,
+    ADProofsRoot: header.adProofsRoot,
+    stateRoot: header.stateRoot,
+    transactionsRoot: header.transactionsRoot,
+    timestamp: header.timestamp,
+    nBits: header.nBits,
+    height: header.height,
+    extensionRoot: header.extensionHash,
+    minerPk: header.powSolutions.pk,
+    powOnetimePk: header.powSolutions.w,
+    powNonce: header.powSolutions.n,
+    powDistance: header.powSolutions.d,
+    votes: header.votes,
+  };
+}
+
 export const headers = [
     `{
         "extensionId" : "1d6a13a3ad0723eeb2c1de056d17be6ea1908393c5768e46cc83898e5cd025dd",
