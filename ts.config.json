@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "sigmastate-js": ["./node_modules/sigmastate-js/sigmastate-js.d.ts"]
+      }
+    }
+  }
+  
