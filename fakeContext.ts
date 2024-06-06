@@ -1,4 +1,4 @@
-const headers = [
+export const headers = [
     `{
         "extensionId" : "1d6a13a3ad0723eeb2c1de056d17be6ea1908393c5768e46cc83898e5cd025dd",
         "difficulty" : "1814331624783872",

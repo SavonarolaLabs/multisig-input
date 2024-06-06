@@ -1,102 +1,48 @@
-export const BOB_MNEMONIC = "egg echo hidden network child actor grab cannon fence breeze asthma tube city cage satisfy";
-export const ALICE_MNEMONIC = "frozen blur option farm fiscal nest wrist able pudding glare grow horror";
-export const POOL_MNEMONIC = "above pupil display execute pulse embark jazz shoot crane small save critic flock monitor kiss";
+export const ALICE_MNEMONIC =
+	'swim current hurry local faint obey scare vessel inch chest lock paddle since world agree';
+export const BOB_MNEMONIC =
+	'grit sorry wise village fork movie kingdom trend jar grant icon equal vessel case nominee';
+export const POOL_MNEMONIC =
+	'phrase belt winner top helmet satoshi unfold gas little until choose hurt rough minute name';
 
-export const BOB_ADDRESS =
-	'9euvZDx78vhK5k1wBXsNvVFGc5cnoSasnXCzANpaawQveDCHLbU';
-export const POOL_ADDRESS =
-	'9fE4Hk2QXzij6eKt73ki93iWVKboZgRPgV95VZYmazdzqdjPEW8';
-export const ALICE_ADDRESS =
-	'9gJa6Mict6TVu9yipUX5aRUW87Yv8J62bbPEtkTje28sh5i3Lz8';
+export const ALICE_ADDRESS = '9h4PvCt8B4ZJtzmpneRwatFwufMgTSLm8UXK2waxuHhgZjLZkgK';
+export const BOB_ADDRESS = '9hh35g9W39kSKFuScYaLC7XqU8nunb3kmPXjwVkCyUsdx6ZdVnJ';
+export const POOL_ADDRESS = '9gQcQmLujhaWzyLxaRPKq1Fu5H9uAeikxiudRLiz9TmzBCixGo4';
 
-export const unsignedTx = {
-  inputs: [
-    {
-      boxId: '1e39d7e19f47f4f5d1ee7824fbaa3660182df8977d5f790764826b78a6d9135c',
-      value: '1000000',
-      ergoTree: '100f010004000402040004000500050004000500050005000400050005000500d81dd601d9010163e4c672010504d602da720101a7d603d17300d60483020872037203d605d9010563b2e5c6720504147204730100d606da720501a7d607d9010763b2e5c6720704147204730200d608d9010863ed937206da720501720893da720701a7da7207017208d609d9010963937202da7201017209d60a830002d60b8602720a720ad60cd9010c638ce5c6720c063c0e0e720b01d60dda720c01a7d60ed9010e638ce5c6720e063c0e0e720b02d60fd9010f638cb2db6308720f73030001d610d9011063e4c672100705d611d9011163e4c67211080ed612da721101a7d613d9011363ededededededdad901156393c27215c2a7017213da7208017213da7209017213dad9011563ed93720dda720c01721593da720e01a7da720e017215017213dad9011563eded93720dda720c01721591b1db63087215730493720dda720f017215017213dad901156391da72100172157305017213dad9011563937212da7211017215017213d614b5a47213d615d9011563e4c672150905d616b072147306d901164163d802d6188c721601d619da7215018c72160295917218721972187219d617da720e01a7d618d90118638cb2db6308721873070002d619d9011941639a8c721901da7218018c721902d61ad9011a639d9cda721001721a7216da721501721ad61bd9011b63edda721301721bdad9011d63939cda721001721d72169cda721501721db072147308d9011f4163d802d6218c721f01d622da721a018c721f029591722172227221722201721bd61c99dad9011c0c63b0b5721c72137309721901a4dad9011c0c63b0b5721c721b730a721901a5d61dd9011d4163d801d61f8c721d029a8c721d019cda721801721fda721a01721f9591a372027206d801d61eda720701a7eb02ea027206721eea02d1929d9c7216dad9011f0c63b0b5721fd9012163edededda7208017221da7209017221dad9012363eded937217da720e01722391b1db63087223730b937217da720f017223017221937212c27221730c721901a5721c9d99b07214730d721db0b5a5721b730e721d721c721e',
-      creationHeight: 1275000,
-      assets: [
-        {
-          tokenId: '5bf691fbf0c4b17f8f8cece83fa947f62f480bfbd242bd58946f85535125db4d',
-          amount: '10000'
-        }
-      ],
-      additionalRegisters: {
-        R7: '0504',
-        R6: '3c0e0e205bf691fbf0c4b17f8f8cece83fa947f62f480bfbd242bd58946f85535125db4d2003faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04',
-        R8: '0e45100204000402d801d601d9010163b2e4c6720104147300009591a3dad9010263e4c67202050401a7da720101a7ea02da720101a7dad9010263b2e4c67202041473010001a7',
-        R9: '05d00f',
-        R4: '1402cd0233e9a9935c8bbb8ae09b2c944c1d060492a8832252665e043b0732bdf593bf2ccd025d163103d491a5193c7b18182442877ce8fcf3ffb9ae9c295d9c98a16dcb0551',
-        R5: '04c0d89e01'
-      },
-      transactionId: '8649a4933c56e9e71d1e93009b195c167bc4d8c98ceb79aabea8bd615a4268e4',
-      index: 0,
-      extension: {}
-    },
-    {
-      boxId: 'cfc3972a810fbd86a25fa3b910ff8b00dd48d339b6dd20272dffe2621689dad8',
-      value: '10000000',
-      ergoTree: '100204000402d801d601d9010163b2e4c6720104147300009591a3dad9010263e4c67202050401a7da720101a7ea02da720101a7dad9010263b2e4c67202041473010001a7',
-      creationHeight: 1275107,
-      assets: [
-        {
-          tokenId: '03faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04',
-          amount: '100'
-        }
-      ],
-      additionalRegisters: {
-        R4: '1402cd02eb083423041003740c9e791b2fea5ecf6e273669630a25b7ecabf9145395e447cd025d163103d491a5193c7b18182442877ce8fcf3ffb9ae9c295d9c98a16dcb0551',
-        R5: '04c0d89e01'
-      },
-      transactionId: '4ce2b637f9e1a637bcd8458cbe83662b78f547fa431e4f4b4364342ba847ec6f',
-      index: 0,
-      extension: {}
-    }
-  ],
-  dataInputs: [],
-  outputs: [
-    {
-      value: '1000000',
-      ergoTree: '100204000402d801d601d9010163b2e4c6720104147300009591a3dad9010263e4c67202050401a7da720101a7ea02da720101a7dad9010263b2e4c67202041473010001a7',
-      creationHeight: 1275000,
-      assets: [
-        {
-          tokenId: '03faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04',
-          amount: '20'
-        }
-      ],
-      additionalRegisters: {
-        R4: '1402cd0233e9a9935c8bbb8ae09b2c944c1d060492a8832252665e043b0732bdf593bf2ccd025d163103d491a5193c7b18182442877ce8fcf3ffb9ae9c295d9c98a16dcb0551',
-        R5: '04c0d89e01',
-        R6: '3c0e0e205bf691fbf0c4b17f8f8cece83fa947f62f480bfbd242bd58946f85535125db4d2003faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04'
+export const utxo = [
+  {
+    boxId: "fe4daef7e5eaa2bb93013d94c1ae78c272d9ac11e9b1d4e1f515405ef2668de8",
+    transactionId: "2194af861e036f3a7012a6efda33686b32a7fffe188ae408a291cdb0fd7dcb4e",
+    blockId: "a7b3deaae00a8edf11637ffd5a74e328c731b842bb0e080da27b905c0baacde7",
+    value: "5000000000",
+    index: 0,
+    globalIndex: 6150710,
+    creationHeight: 1280810,
+    settlementHeight: 1280812,
+    ergoTree: "0008cd02f8bf1ab71f755192e39eb54fe4e7de5362ce618f9ac04550b96f87b0e674ed7c",
+    ergoTreeConstants: "",
+    ergoTreeScript: "{SigmaProp(ProveDlog(ECPoint(f8bf1a,5ba113,...)))}",
+    address: "9gQcQmLujhaWzyLxaRPKq1Fu5H9uAeikxiudRLiz9TmzBCixGo4",
+    assets: [
+      {
+        tokenId: "5bf691fbf0c4b17f8f8cece83fa947f62f480bfbd242bd58946f85535125db4d",
+        index: 0,
+        amount: "100000000000000",
+        name: "rsBTC",
+        decimals: 8,
+        type: "EIP-004",
+      }, {
+        tokenId: "f60bff91f7ae3f3a5f0c2d35b46ef8991f213a61d7f7e453d344fa52a42d9f9a",
+        index: 1,
+        amount: "500000000",
+        name: "SigUSD",
+        decimals: 2,
+        type: "EIP-004",
       }
-    },
-    {
-      value: '8900000',
-      ergoTree: '100204000402d801d601d9010163b2e4c6720104147300009591a3dad9010263e4c67202050401a7da720101a7ea02da720101a7dad9010263b2e4c67202041473010001a7',
-      creationHeight: 1275000,
-      assets: [
-        {
-          tokenId: '5bf691fbf0c4b17f8f8cece83fa947f62f480bfbd242bd58946f85535125db4d',
-          amount: '10000'
-        },
-        {
-          tokenId: '03faf2cb329f2e90d6d23b58d91bbb6c046aa143261cc21f52fbe2824bfcbf04',
-          amount: '80'
-        }
-      ],
-      additionalRegisters: {
-        R4: '1402cd02eb083423041003740c9e791b2fea5ecf6e273669630a25b7ecabf9145395e447cd025d163103d491a5193c7b18182442877ce8fcf3ffb9ae9c295d9c98a16dcb0551',
-        R5: '04c0d89e01'
-      }
-    },
-    {
-      value: '1100000',
-      ergoTree: '1005040004000e36100204a00b08cd0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ea02d192a39a8cc7a701730073011001020402d19683030193a38cc7b2a57300000193c2b2a57301007473027303830108cdeeac93b1a57304',
-      creationHeight: 1275000,
-      assets: [],
-      additionalRegisters: {}
-    }
-  ]
-}
+    ],
+    additionalRegisters: {},
+    spentTransactionId: null,
+    mainChain: true,
+  }
+]
+
