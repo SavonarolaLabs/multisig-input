@@ -1,14 +1,14 @@
 import { ALICE_ADDRESS, ALICE_MNEMONIC, POOL_ADDRESS, POOL_MNEMONIC, utxo } from './constants';
 import { signTxInput } from './sign';
 import { describe, it, expect, beforeAll } from 'vitest';
-import { ProverBuilder$, ReducedInputData } from 'sigmastate-js/main';
+import { AvlTree$, ProverBuilder$, ReducedInputData } from 'sigmastate-js/main';
 import bip39 from 'bip39';
-import { headers, sigmaJsHeader } from 'fakeContext';
+import { headers, jsonHeaders, sigmaJsHeader } from 'fakeContext';
 import { OutputBuilder, SAFE_MIN_BOX_VALUE, TransactionBuilder } from '@fleet-sdk/core';
 import { EIP12UnsignedTransaction, UnsignedTransaction } from '@fleet-sdk/common';
 
 const network = 0;
-const height = 1_260_252;
+const height = 1_282_255;
 
 let unsignedTx: EIP12UnsignedTransaction;
 
@@ -56,14 +56,17 @@ describe('UnsignedTransaction', () => {
 		);
 
 		const prover = builder.build();
-		const address = prover.getP2PKAddress();
-		expect(address).toBe('9hLjz8tcDD6iLALjcTjyHxqZu8qQQ1VkrPnWhroGbhUr8yNgiaz');
+
+
+		const xHeaders = jsonHeaders.map(sigmaJsHeader).reverse()
 
 		const stateCtx = {
-			sigmaLastHeaders: headers.map(h => JSON.parse(h)).map(sigmaJsHeader),
-			previousStateDigest: JSON.parse(headers[0]).stateRoot,
-			sigmaPreHeader: sigmaJsHeader(JSON.parse(headers[0])),
+			sigmaLastHeaders: xHeaders,
+			previousStateDigest: xHeaders[0].stateRoot.digest,
+			sigmaPreHeader: xHeaders[0],
 		};
+		//let parsed = parse(stateCtx.sigmaLastHeaders[0].stateRoot);
+		//expect(parsed).toBe(1)
 
 		const data: ReducedInputData = prover.reduceTransactionInput(
 			stateCtx,

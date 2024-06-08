@@ -1,25 +1,220 @@
-export function sigmaJsHeader(header:any){
-  return {
-    id: header.id,
-    version: header.version,
-    parentId: header.parentId,
-    ADProofsRoot: header.adProofsRoot,
-    stateRoot: header.stateRoot,
-    transactionsRoot: header.transactionsRoot,
-    timestamp: header.timestamp,
-    nBits: header.nBits,
-    height: header.height,
-    extensionRoot: header.extensionHash,
-    minerPk: header.powSolutions.pk,
-    powOnetimePk: header.powSolutions.w,
-    powNonce: header.powSolutions.n,
-    powDistance: header.powSolutions.d,
-    votes: header.votes,
-  };
+import { AvlTree$, GroupElement$ } from 'sigmastate-js/main';
+
+export function sigmaJsHeader(header: any) {
+	return {
+		id: header.id,
+		version: header.version,
+		parentId: header.parentId,
+		ADProofsRoot: header.adProofsRoot,
+		stateRoot: AvlTree$.fromDigest(header.stateRoot),
+		transactionsRoot: header.transactionsRoot,
+		timestamp: header.timestamp,
+		nBits: header.nBits,
+		height: header.height,
+		extensionRoot: header.extensionHash,
+		minerPk: GroupElement$.fromPointHex(header.powSolutions.pk),
+		powOnetimePk: GroupElement$.fromPointHex(header.powSolutions.w),
+		powNonce: header.powSolutions.n,
+		powDistance: BigInt(header.powSolutions.d),
+		votes: header.votes,
+	};
 }
 
+export const jsonHeaders = [
+	{
+		id: '24587f75221fae3b672c735c70167928c5aef775cbd0e67e01c195735f824afe',
+		parentId: '10f7f78bd141a6a2cb8db90ec357648e21160f3bf896f26223db2cfaa87b1a3f',
+		version: 3,
+		timestamp: 1717863621391,
+		height: 1282256,
+		nBits: 117775526,
+		votes: '080000',
+		stateRoot: 'fc7dc6c7715127d38cbc16bdb909ff53a551fe88f0dd5bbbda669e55d9f968841a',
+		adProofsRoot: 'b5fded4d869c315a296503f2e624682343d55888a46429940b5bc2b29a55444b',
+		transactionsRoot: '973948f6d681294715a4f022b0c03c68cd32a7a1a668292e19fcd789a34eb43a',
+		extensionHash: '3ecf5d2666105adaf60c14f481d84c46dadf083ad7004ad0bb0c43b0a153793e',
+		powSolutions: {
+			pk: '03677d088e4958aedcd5cd65845540e91272eba99e4d98e382f5ae2351e0dfbefd',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'b5299a003629f80a',
+			d: '0',
+		},
+	},
+	{
+		id: '10f7f78bd141a6a2cb8db90ec357648e21160f3bf896f26223db2cfaa87b1a3f',
+		parentId: '394c7f3ae4269c06172706a68283c6067397360b31d5cd7c4bc53c2172b64897',
+		version: 3,
+		timestamp: 1717863408312,
+		height: 1282255,
+		nBits: 117775526,
+		votes: '080000',
+		stateRoot: 'ae566d8272662fe82de4378c53bed81e65268f0d5389880cc126e074026bae861a',
+		adProofsRoot: '34d602ec597ff48ff3deb727f821f90cc4645043be931ebdd449748ce94e22dc',
+		transactionsRoot: '824a8153966ff1f6c5811364cd49b33ca0b0668bf508b330d0818aa4f6ffc6a1',
+		extensionHash: '3ecf5d2666105adaf60c14f481d84c46dadf083ad7004ad0bb0c43b0a153793e',
+		powSolutions: {
+			pk: '03677d088e4958aedcd5cd65845540e91272eba99e4d98e382f5ae2351e0dfbefd',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: '95c02200a8e11d2e',
+			d: '0',
+		},
+	},
+	{
+		id: '394c7f3ae4269c06172706a68283c6067397360b31d5cd7c4bc53c2172b64897',
+		parentId: 'c672c0e9975f30b6d61931e4a3f4317174e19803b98fdc04b61bcaee44028dd6',
+		version: 3,
+		timestamp: 1717863344401,
+		height: 1282254,
+		nBits: 117775526,
+		votes: '000000',
+		stateRoot: '4a5401412138ed7a6a1f1df1706bcb2e36e1df4636581564312f4af23cba0b301a',
+		adProofsRoot: 'aa3af334320392f6a7a28b8dd8a8091b7242bdb64a5d47f17ed1dcdedf6501ba',
+		transactionsRoot: '4287a17eceb9678599d04c3325d7fa0db36ff0b85678be9dba566bb294a66cc8',
+		extensionHash: '3ecf5d2666105adaf60c14f481d84c46dadf083ad7004ad0bb0c43b0a153793e',
+		powSolutions: {
+			pk: '0223b461fab0b119677449b56760cb01586fc38b007764d4744e14a2da270322b5',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: '827fbb53377434f2',
+			d: '0',
+		},
+	},
+	{
+		id: 'c672c0e9975f30b6d61931e4a3f4317174e19803b98fdc04b61bcaee44028dd6',
+		parentId: '9e8e8584f9fd9653eb5976f1fc167753186a98a0438a6ae704b42c8697d4cecd',
+		version: 3,
+		timestamp: 1717863147263,
+		height: 1282253,
+		nBits: 117775526,
+		votes: '000000',
+		stateRoot: 'd34a28b1310d75200ea6a0c90e009b80f8dd2963f1e06ecffbacde4f42a3bfee1a',
+		adProofsRoot: 'e372fbb17ba24658f9e1ce643641a841efcd602e1c41790aefef973cd433ce9b',
+		transactionsRoot: 'ef23b2d71ca9489b46cb5251640010e27e34fa029a95b570c6c124a4173f684c',
+		extensionHash: 'b9be518371b867df5ac82a06443991ed8bf9306ebf55a7434b15210df9a0c539',
+		powSolutions: {
+			pk: '0295facb78290ac2b55f1453204d49df37be5bae9f185ed6704c1ba3ee372280c1',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'a1c10009e3a315f2',
+			d: '0',
+		},
+	},
+	{
+		id: '9e8e8584f9fd9653eb5976f1fc167753186a98a0438a6ae704b42c8697d4cecd',
+		parentId: 'd01f8967ca6bcd7aa13af207fc6ed6a8acb57b4074ec4392668a66fe781bfb23',
+		version: 3,
+		timestamp: 1717863122763,
+		height: 1282252,
+		nBits: 117775526,
+		votes: '000000',
+		stateRoot: '284e3943db7649c2b2a325e35a812ed346f32e18a31fc2eaaaf6b4b2f643ebfe1a',
+		adProofsRoot: '2f5f690a07c5d5cfd5dae197e542cecc8dc52ae18447c36a8968532df83fcc7b',
+		transactionsRoot: '98a15004c5e34a3ce209bd61eb328cf9ab7821d4804e0d5e2776a124d0545200',
+		extensionHash: 'b9be518371b867df5ac82a06443991ed8bf9306ebf55a7434b15210df9a0c539',
+		powSolutions: {
+			pk: '02eeec374f4e660e117fccbfec79e6fe5cdf44ac508fa228bfc654d2973f9bdc9a',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'e13800048268ca56',
+			d: '0',
+		},
+	},
+	{
+		id: 'd01f8967ca6bcd7aa13af207fc6ed6a8acb57b4074ec4392668a66fe781bfb23',
+		parentId: '9a380a48131925a260f613659b34492a9b8ff7eb39f98aad4987079db203ef4d',
+		version: 3,
+		timestamp: 1717862773912,
+		height: 1282251,
+		nBits: 117775526,
+		votes: '000000',
+		stateRoot: 'c09c380b054005326e8b4f122da6b1e9d9ddf45be3f5c1a1d3d4b3e9253592a01a',
+		adProofsRoot: '8680e6c0d0fe1e017c39ceda3c619ea7850e72f81885174dbc9b0bef7d74456e',
+		transactionsRoot: '99d630ae8ead0ee7e68caa4caf21967a70b1e586c4613fe08a1ed37ab9fa32f5',
+		extensionHash: '8d45e1653f21750f583b53ec970d3f828e92501483b9471693794e18fbcaf8cf',
+		powSolutions: {
+			pk: '0295facb78290ac2b55f1453204d49df37be5bae9f185ed6704c1ba3ee372280c1',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'a4d20018a87b8a4a',
+			d: '0',
+		},
+	},
+	{
+		id: '9a380a48131925a260f613659b34492a9b8ff7eb39f98aad4987079db203ef4d',
+		parentId: '83a8eade82a6d71c6e42a6bd22d713c49809b3f8a2874ef6b691346f2bd2da58',
+		version: 3,
+		timestamp: 1717862705685,
+		height: 1282250,
+		nBits: 117775526,
+		votes: '000000',
+		stateRoot: 'd066847f4f30064b29aaa901717dcf4f2500c446622af666bbc9af5066fff2991a',
+		adProofsRoot: 'a09323112a35ce2210732482dfb3d9135b8799b0ea1d9decdc801dea271c69b0',
+		transactionsRoot: 'f643de048397d12b1c58579f23fb55cdfe9ce74d66ab899024b8557e44ff5769',
+		extensionHash: 'ea48106638079bd93c6124af301c1ace2be76d9275c6cf82a60adea21185fcc5',
+		powSolutions: {
+			pk: '0274e729bb6615cbda94d9d176a2f1525068f12b330e38bbbf387232797dfd891f',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: '65fe0004e59d407a',
+			d: '0',
+		},
+	},
+	{
+		id: '83a8eade82a6d71c6e42a6bd22d713c49809b3f8a2874ef6b691346f2bd2da58',
+		parentId: '31ea3b11d226c1c2ffe3ed52ed467aa89fe69c648422b920c4a6795b5bc3f261',
+		version: 3,
+		timestamp: 1717862655809,
+		height: 1282249,
+		nBits: 117775526,
+		votes: '080000',
+		stateRoot: 'b94b0cd75a8ced75435bf646b142699774b7719a7dc6d7bf3521231707883a4c1a',
+		adProofsRoot: 'eb40c786a40450f371ae379c1dc3431d8ea1f30e8e3a134e171d4792bbe106c2',
+		transactionsRoot: 'af8c49a0e721076de8c35fecc1ba450b52a581875bd9b4ac3756d5453b0b70f8',
+		extensionHash: '987952f8d2eba20163aab8fdfe71f9a2c900f7757862ddcf8402552cc1988b99',
+		powSolutions: {
+			pk: '03677d088e4958aedcd5cd65845540e91272eba99e4d98e382f5ae2351e0dfbefd',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'dd4138c023ae6df4',
+			d: '0',
+		},
+	},
+	{
+		id: '31ea3b11d226c1c2ffe3ed52ed467aa89fe69c648422b920c4a6795b5bc3f261',
+		parentId: '67d045e914359c8934d205ef05818688944d94cb4c211032e7fe48f21e4f9762',
+		version: 3,
+		timestamp: 1717862652982,
+		height: 1282248,
+		nBits: 117775526,
+		votes: '080000',
+		stateRoot: '113aaf2565e6b5879adb961d43920f1c772789af58758fe57cf71ebbc1c2e43d1a',
+		adProofsRoot: 'c01fa3201e7cf0e6c4b63c32d8e3d84dd4850101d6d10a6e0e6540b8bdb09ac3',
+		transactionsRoot: 'e8e91d37c7c376a36947a487a5fa3404565f6146b5e41837ab11d74ffe0a8a11',
+		extensionHash: '9845d1f3409b51c3a61300b8119955caf086b0e497cd67ee08f7167212615bff',
+		powSolutions: {
+			pk: '03677d088e4958aedcd5cd65845540e91272eba99e4d98e382f5ae2351e0dfbefd',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: '6ce31b4000e2a1f8',
+			d: '0',
+		},
+	},
+	{
+		id: '67d045e914359c8934d205ef05818688944d94cb4c211032e7fe48f21e4f9762',
+		parentId: 'b4d4bd706d385ae3a2d090ce9ede579f481bd0b4f8f116a508e73f682054ab23',
+		version: 3,
+		timestamp: 1717862631198,
+		height: 1282247,
+		nBits: 117775526,
+		votes: '080000',
+		stateRoot: '71d8ea5a2d1fb9bee68acca4cac30bbb15eb67304856027e5c7567b4e801ba6f1a',
+		adProofsRoot: '23cb8d94d01428e692ebcbe0ad42c4b67ff0a2f4c2b924a0b09435f1a284d9ab',
+		transactionsRoot: 'dec521e86dcee6830e85a72df206f850b05361cfc17d2ade42af1fdbf21c24e6',
+		extensionHash: '5c623cf8cf41ec7f48f3e296f8e620f085e26552481bdacec672e0c5e8acc9c2',
+		powSolutions: {
+			pk: '03677d088e4958aedcd5cd65845540e91272eba99e4d98e382f5ae2351e0dfbefd',
+			w: '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+			n: 'b8daa6001046f503',
+			d: '0',
+		},
+	},
+];
+
 export const headers = [
-    `{
+	`{
         "extensionId" : "1d6a13a3ad0723eeb2c1de056d17be6ea1908393c5768e46cc83898e5cd025dd",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -43,7 +238,7 @@ export const headers = [
         "transactionsId" : "f1c11b39c4aff5f3870be6ecea1e976775d2af16548c42b0795735e3d114c44b",
         "parentId" : "7b282808fc13bf596de3192b2bf399b3de3fccc95a31199774413f62d05e010b"
       }`,
-    `{
+	`{
         "extensionId" : "22ff689392bac51a0f67e54d8b1affe6141d1d64076a6a1e532807e9def6a59e",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -67,7 +262,7 @@ export const headers = [
         "transactionsId" : "357d0ec3d5c41d83783a5365d122b57cdcc7b44afd2b8d835d0872d3d89fdf6c",
         "parentId" : "378dba6a164fc2410cfc0c81ce345865a58cf3b7a4b11c30b93fc3ac2fcd77e5"
       }`,
-    `{
+	`{
         "extensionId" : "e5537ad2aabf7f2d879508096fa8ee675f1d3ed8f24ff5b6ca1b49c849dcccdc",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -91,7 +286,7 @@ export const headers = [
         "transactionsId" : "c9233d46390ffce777862578a1a8729a1a0e49ad94f68ff5bf174a4443161b59",
         "parentId" : "903c0fd3c16f78326ba94dc0941901dedd7adb2a53db4477251b0d2a42e1694c"
       }`,
-    `{
+	`{
         "extensionId" : "6e83dea79fc2d13f98373d3df27db1bd6568f05a0fc4912eeb0ebfe9b4425660",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -115,7 +310,7 @@ export const headers = [
         "transactionsId" : "35ecf7d06381acbbe74df7d7b967777c8b54955ae7d72a52448ae47d3a944b11",
         "parentId" : "c851ee374e924999c681f3b1097c966f69f869c2870c8d3ecdaa985b845e5f06"
       }`,
-    `{
+	`{
         "extensionId" : "a7925aba13f020a4c7f99716f755ed992256d5ffe51796bd1cad8bdd82be8fcc",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -139,7 +334,7 @@ export const headers = [
         "transactionsId" : "bd3168acace3654ef3915c4f0583f2a8ea6f04b1d4102292226eb9dd69354cc8",
         "parentId" : "6dc0f04ea3f0ac40126ff9672bf9e56ccf6eaa13c30c73193ac7f14be0ae5e37"
       }`,
-    `{
+	`{
         "extensionId" : "9865d1b362e65581f96223a210aa1ae2480763650248ce7eb3375fd3fa9aba7f",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -163,7 +358,7 @@ export const headers = [
         "transactionsId" : "82a6c3846ab99c54d982048f557b0694f4a0893819b74411d94114f6655de845",
         "parentId" : "f1384657f47f71df003a9b61b790dd61e50c14739bc8a4136df3f1613716ef2b"
       }`,
-    `{
+	`{
         "extensionId" : "3e405a2b3b63acb13e7692bec16bb51e88f0d8c1efc768e9f11dcf5af6df96dd",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -187,7 +382,7 @@ export const headers = [
         "transactionsId" : "51afabff78d7d46c461819828e2a99bfc9033f4e119e8ddddf95e60c535b0af0",
         "parentId" : "932a58dfd28b6fdf741943b0ddc9f7e1c461ec90b8ca90b7d2e1a5f5ec754d31"
       }`,
-    `{
+	`{
         "extensionId" : "fe309b8a2ad43f93ee3b69bb726bf90af0f3927e6182ff21b5e59c6fe2e96161",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -211,7 +406,7 @@ export const headers = [
         "transactionsId" : "57c19f6b38aae5b198fdb5098aa64a296c6419e7ba9e5e751c09a9f44e7b00be",
         "parentId" : "53d9950a70b8c8bc5411c560526b500e0105b0c0929fc3f15fc4ecd59d962c66"
       }`,
-    `{
+	`{
         "extensionId" : "83e464e5575a7c1fb90b98be7353e3ca6ca90555330422563e5480d6deac92cc",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -235,7 +430,7 @@ export const headers = [
         "transactionsId" : "fa5fb2401087bd1d23e5bd9346d15586bd50808d7c74e6ae9c0ba3ff2fae675a",
         "parentId" : "1fbc3eb714852862463fff30969f06367004394f1ea0a20165a6a3e72fd27eb1"
       }`,
-    `{
+	`{
         "extensionId" : "8e4496761ad525ef2b193e1e8a76f8edbb8497447314e608473564641321c65b",
         "difficulty" : "1814331624783872",
         "votes" : "000000",
@@ -259,12 +454,10 @@ export const headers = [
         "transactionsId" : "ce8afe8ae2dbfd81057dd7bba422a78e327152a5c74a930634b4d9b7725cc681",
         "parentId" : "4fcf937adf9b18420fd32fa09947d913dcd021b9a0f9adb93b2e149afe60bbc3"
       }`,
-  ];
-  
-  export const fakeContext = (wasm: any) => {
-    const blockHeaders = wasm.BlockHeaders.from_json(headers);
-    const preHeader = wasm.PreHeader.from_block_header(
-      wasm.BlockHeader.from_json(headers[0]),
-    );
-    return new wasm.ErgoStateContext(preHeader, blockHeaders);
-  };
+];
+
+export const fakeContext = (wasm: any) => {
+	const blockHeaders = wasm.BlockHeaders.from_json(headers);
+	const preHeader = wasm.PreHeader.from_block_header(wasm.BlockHeader.from_json(headers[0]));
+	return new wasm.ErgoStateContext(preHeader, blockHeaders);
+};

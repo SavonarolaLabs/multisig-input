@@ -19,7 +19,7 @@
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "ergo-lib-wasm-nodejs": "^0.26.0",
-    "sigmastate-js": "^0.4.4",
+    "sigmastate-js": "^0.4.5",
     "tiny-secp256k1": "^2.2.3",
     "vite-tsconfig-paths": "^4.3.2"
   }
