@@ -8,7 +8,7 @@ import { OutputBuilder, SAFE_MIN_BOX_VALUE, TransactionBuilder } from '@fleet-sd
 import { EIP12UnsignedTransaction, UnsignedTransaction } from '@fleet-sdk/common';
 
 const network = 0;
-const height = 1_282_255;
+const height = 1282261;
 
 let unsignedTx: EIP12UnsignedTransaction;
 
@@ -34,18 +34,37 @@ describe('UnsignedTransaction', () => {
 	});
 
 	it('sigma-state.js can sign', async () => {
+		//https://api.ergoplatform.com/api/v1/info
+		const info = {
+			lastBlockId: '5b9b19ac028c6956b4cdf8ec75227934b8134ff3635ed3aceac8a8bf20788dce',
+			height: 1282261,
+			maxBoxGix: 6197269,
+			maxTxGix: 1167892,
+			params: {
+				height: 506880,
+				storageFeeFactor: 1250000,
+				minValuePerByte: 360,
+				maxBlockSize: 1271009,
+				maxBlockCost: 7030268,
+				blockVersion: 2,
+				tokenAccessCost: 100,
+				inputCost: 2000,
+				dataInputCost: 100,
+				outputCost: 100,
+			},
+		};
 		const BLOCKCHAIN_PARAMETERS = {
-			storageFeeFactor: 1000,
-			minValuePerByte: 1,
-			maxBlockSize: 1000000,
-			tokenAccessCost: 100,
-			inputCost: 10,
-			dataInputCost: 10,
-			outputCost: 10,
-			maxBlockCost: 1000000,
+			storageFeeFactor: info.params.storageFeeFactor,
+			minValuePerByte: info.params.minValuePerByte,
+			maxBlockSize: info.params.maxBlockSize,
+			tokenAccessCost: info.params.tokenAccessCost,
+			inputCost: info.params.inputCost,
+			dataInputCost: info.params.dataInputCost,
+			outputCost: info.params.outputCost,
+			maxBlockCost: info.params.maxBlockCost,
 			softForkStartingHeight: 100,
 			softForkVotesCollected: 50,
-			blockVersion: 1,
+			blockVersion: info.params.blockVersion,
 		};
 		const buffer = await bip39.mnemonicToSeed(ALICE_MNEMONIC);
 		const mnemonicPhrase = buffer.toString('hex');
@@ -57,8 +76,7 @@ describe('UnsignedTransaction', () => {
 
 		const prover = builder.build();
 
-
-		const xHeaders = jsonHeaders.map(sigmaJsHeader).reverse()
+		const xHeaders = jsonHeaders.map(sigmaJsHeader).reverse();
 
 		const stateCtx = {
 			sigmaLastHeaders: xHeaders,
