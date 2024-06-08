@@ -77,14 +77,11 @@ describe('UnsignedTransaction', () => {
 		const prover = builder.build();
 
 		const xHeaders = jsonHeaders.map(sigmaJsHeader).reverse();
-
 		const stateCtx = {
 			sigmaLastHeaders: xHeaders,
 			previousStateDigest: xHeaders[0].stateRoot.digest,
 			sigmaPreHeader: xHeaders[0],
 		};
-		//let parsed = parse(stateCtx.sigmaLastHeaders[0].stateRoot);
-		//expect(parsed).toBe(1)
 
 		const data: ReducedInputData = prover.reduceTransactionInput(
 			stateCtx,
