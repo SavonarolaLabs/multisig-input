@@ -8,7 +8,16 @@ import {
 	POOL_MNEMONIC,
 	utxo,
 } from './constants';
-import { a, bMultiInput, cMultiInput, signTx, signTxInput, signTxMulti } from './sign';
+import {
+	a,
+	bMultiInput,
+	bMultiInputs,
+	cMultiInput,
+	cMultiInputs,
+	signTx,
+	signTxInput,
+	signTxMulti,
+} from './sign';
 import { describe, it, expect, beforeAll } from 'vitest';
 import { ProverBuilder$, ReducedInputData } from 'sigmastate-js/main';
 import bip39 from 'bip39';
@@ -157,13 +166,14 @@ describe.only('Virtual Box on Deposit', () => {
 	it('can deposit box', () => {
 		expect(depositBox).toBeTruthy();
 	});
-	it('can withdraw box with Multisig', async () => {
+
+	it('[0:Bob+Pool]		MultisigTx', async () => {
 		const withdrawValue = 200_000_000n;
 		const output = new OutputBuilder(withdrawValue, BOB_ADDRESS);
 
 		const unsignedTx = new TransactionBuilder(height)
-			.configureSelector(selector => selector.ensureInclusion([utxo[0].boxId]))
-			.from([utxo[0]])
+			.configureSelector(selector => selector.ensureInclusion([depositBox.boxId]))
+			.from([depositBox])
 			.to(output)
 			.sendChangeTo(BOB_ADDRESS)
 			.payFee(RECOMMENDED_MIN_FEE_VALUE)
@@ -171,10 +181,82 @@ describe.only('Virtual Box on Deposit', () => {
 			.toEIP12Object();
 
 		const signedTx = await signTxMulti(unsignedTx, BOB_MNEMONIC, BOB_ADDRESS);
+		expect(signedTx).toBeDefined();
+	});
 
-		// console.log('--------------------TEST 2-----------------');
-		// console.log('final Tx:');
-		// console.dir(signedTx, { depth: null });
+	it('[0:Bob+Pool] 		MultisigInput', async () => {
+		const withdrawValue = 200_000_000n;
+		const output = new OutputBuilder(withdrawValue, BOB_ADDRESS);
+
+		const unsignedTx = new TransactionBuilder(height)
+			.configureSelector(selector => selector.ensureInclusion([depositBox.boxId]))
+			.from([depositBox])
+			.to(output)
+			.sendChangeTo(BOB_ADDRESS)
+			.payFee(RECOMMENDED_MIN_FEE_VALUE)
+			.build()
+			.toEIP12Object();
+
+		const { privateCommitsPool, publicCommitsPool } = await a(unsignedTx); // use sign ALL
+
+		const extractedHints = await bMultiInput(
+			unsignedTx,
+			BOB_MNEMONIC,
+			BOB_ADDRESS,
+			publicCommitsPool,
+		);
+
+		const signedTx = await cMultiInput(unsignedTx, privateCommitsPool, extractedHints);
+		expect(signedTx).toBeDefined();
+	});
+
+	it('[0:Bob+Pool, 1:Bob]	MultisigTx', async () => {
+		const withdrawValue = 200_000_000n;
+		const output = new OutputBuilder(withdrawValue, BOB_ADDRESS);
+		const additionalBobInput = utxo[1];
+		const allInputs = [depositBox, additionalBobInput];
+
+		const unsignedTx = new TransactionBuilder(height)
+			.configureSelector(selector => selector.ensureInclusion(allInputs.map(b => b.boxId)))
+			.from(allInputs)
+			.to(output)
+			.sendChangeTo(BOB_ADDRESS)
+			.payFee(RECOMMENDED_MIN_FEE_VALUE)
+			.build()
+			.toEIP12Object();
+
+		const signedTx = await signTxMulti(unsignedTx, BOB_MNEMONIC, BOB_ADDRESS);
+		expect(signedTx).toBeDefined();
+	});
+
+	it('[0:Bob+Pool, 1:Bob]	MultisigInput', async () => {
+		const withdrawValue = 200_000_000n;
+		const output = new OutputBuilder(withdrawValue, BOB_ADDRESS);
+		const additionalBobInput = utxo[1];
+		const allInputs = [depositBox, additionalBobInput];
+
+		const unsignedTx = new TransactionBuilder(height)
+			.configureSelector(selector => selector.ensureInclusion(allInputs.map(b => b.boxId)))
+			.from(allInputs)
+			.to(output)
+			.sendChangeTo(BOB_ADDRESS)
+			.payFee(RECOMMENDED_MIN_FEE_VALUE)
+			.build()
+			.toEIP12Object();
+
+		const { privateCommitsPool, publicCommitsPool } = await a(unsignedTx); // use sign ALL
+
+		const extractedHints = await bMultiInputs(
+			unsignedTx,
+			BOB_MNEMONIC,
+			BOB_ADDRESS,
+			publicCommitsPool,
+			[0, 1],
+		);
+
+		console.log(extractedHints);
+
+		const signedTx = await cMultiInputs(unsignedTx, privateCommitsPool, extractedHints, [0, 1]); // sign 1 input
 
 		expect(signedTx).toBeDefined();
 	});

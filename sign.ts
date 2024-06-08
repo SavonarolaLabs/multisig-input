@@ -141,6 +141,68 @@ export async function bMultiInput(
 	return extractedHints;
 }
 
+export async function bMultiInputs(
+	unsignedTx: EIP12UnsignedTransaction,
+	userMnemonic: string,
+	userAddress: string,
+	publicCommits: JSONTransactionHintsBag,
+	inputIndexes: number[],
+) {
+	const publicBag = TransactionHintsBag.from_json(JSON.stringify(publicCommits));
+
+	const proverAlice = await getProver(userMnemonic);
+	const reducedTx = reducedFromUnsignedTx(unsignedTx);
+	const initialCommitsAlice = proverAlice.generate_commitments_for_reduced_transaction(reducedTx);
+
+	const unsignedTransaction = UnsignedTransaction.from_json(JSON.stringify(unsignedTx));
+
+	const combinedHints = TransactionHintsBag.empty();
+
+	for (let i = 0; i < unsignedTx.inputs.length; i++) {
+		combinedHints.add_hints_for_input(i, initialCommitsAlice.all_hints_for_input(i));
+		combinedHints.add_hints_for_input(i, publicBag.all_hints_for_input(i));
+	}
+
+	let proofFromInputs = [];
+	for (let i = 0; i < inputIndexes.length; i++) {
+		const partialSignedInput = proverAlice.sign_tx_input_multi(
+			inputIndexes[i],
+			fakeContext(wasm),
+			unsignedTransaction,
+			ErgoBoxes.from_boxes_json(unsignedTx.inputs),
+			ErgoBoxes.empty(),
+			combinedHints,
+		);
+
+		const proof = JSON.parse(partialSignedInput.spending_proof().to_json());
+		proofFromInputs.push(proof);
+	}
+
+	const newUnsignedTx = unsignedTransaction.to_js_eip12();
+
+	newUnsignedTx.transactionId = unsignedTransaction.id().to_str();
+	newUnsignedTx.id = unsignedTransaction.id().to_str();
+
+	const hAlice = ErgoAddress.fromBase58(userAddress).ergoTree.slice(6);
+
+	const proofs = proofFromInputs.map(p => p.proofBytes); // <-------
+	//console.log(proofs);
+
+	// Example usage:
+	const transaction = getNewTransactionFromProofs(unsignedTx, proofs);
+
+	let extractedHints = extract_hints(
+		transaction, //Transaction.from_json(JSON.stringify(newUnsignedTx)),
+		fakeContext(wasm),
+		ErgoBoxes.from_boxes_json(unsignedTx.inputs),
+		ErgoBoxes.empty(),
+		arrayToProposition([hAlice]),
+		arrayToProposition([]),
+	).to_json();
+
+	return extractedHints;
+}
+
 function getNewTransactionFromProofs(unsignedTx, proofs) {
 	const uint8arrays = proofs.map(hexStringToUint8Array);
 	const wasmUnsigned = UnsignedTransaction.from_json(JSON.stringify(unsignedTx));
@@ -191,6 +253,52 @@ export async function cMultiInput(
 
 	const proof = JSON.parse(signedInput.spending_proof().to_json()).proofBytes;
 	const transaction = getNewTransactionFromProofs(unsignedTx, [proof]);
+	return transaction;
+}
+
+export async function cMultiInputs(
+	unsignedTx: EIP12UnsignedTransaction,
+	privateCommitsPool: JSONTransactionHintsBag,
+	hints: JSONTransactionHintsBag,
+	inputIndexes: number[],
+) {
+	const hintsForBobSign = privateCommitsPool;
+	for (var row in hintsForBobSign.publicHints) {
+		for (var i = 0; i < hints.publicHints[row].length; i++) {
+			hintsForBobSign.publicHints[row].push(hints.publicHints[row][i]);
+		}
+		for (var i = 0; i < hints.secretHints[row].length; i++) {
+			hintsForBobSign.secretHints[row].push(hints.secretHints[row][i]);
+		}
+	}
+
+	const convertedHintsForBobSign = TransactionHintsBag.from_json(JSON.stringify(hintsForBobSign));
+	const proverBob = await getProver(POOL_MNEMONIC);
+	const unsignedTransaction = UnsignedTransaction.from_json(JSON.stringify(unsignedTx));
+
+	let proofFromInputs = [];
+	for (let i = 0; i < inputIndexes.length; i++) {
+		const partialSignedInput = proverBob.sign_tx_input_multi(
+			inputIndexes[i],
+			fakeContext(wasm),
+			unsignedTransaction,
+			ErgoBoxes.from_boxes_json(unsignedTx.inputs),
+			ErgoBoxes.empty(),
+			convertedHintsForBobSign,
+		);
+
+		const proof = JSON.parse(partialSignedInput.spending_proof().to_json());
+		proofFromInputs.push(proof);
+	}
+
+	const newUnsignedTx = unsignedTransaction.to_js_eip12();
+
+	newUnsignedTx.transactionId = unsignedTransaction.id().to_str();
+	newUnsignedTx.id = unsignedTransaction.id().to_str();
+
+	const proofs = proofFromInputs.map(p => p.proofBytes);
+
+	const transaction = getNewTransactionFromProofs(unsignedTx, proofs);
 	return transaction;
 }
 
