@@ -295,3 +295,24 @@ const getWalletAddressSecret = (mnemonic: string, idx: number = 0) => {
 
 const RootPathWithoutIndex = "m/44'/429'/0'/0";
 const calcPathFromIndex = (index: number) => `${RootPathWithoutIndex}/${index}`;
+
+export async function signTx(
+	tx: EIP12UnsignedTransaction,
+	mnemonic: string,
+): Promise<SignedTransaction> {
+	const prover = await getProver(mnemonic);
+
+	const boxesToSign = tx.inputs;
+	const boxes_to_spend = ErgoBoxes.empty();
+	boxesToSign.forEach(box => {
+		boxes_to_spend.add(ErgoBox.from_json(JSON.stringify(box)));
+	});
+
+	const signedTx = prover.sign_transaction(
+		fakeContext(wasm),
+		wasm.UnsignedTransaction.from_json(JSON.stringify(tx)),
+		boxes_to_spend,
+		ErgoBoxes.empty(),
+	);
+	return signedTx.to_js_eip12();
+}
