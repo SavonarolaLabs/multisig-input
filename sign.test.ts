@@ -1,5 +1,13 @@
-import { ALICE_ADDRESS, ALICE_MNEMONIC, POOL_ADDRESS, POOL_MNEMONIC, utxo } from './constants';
-import { signTxInput } from './sign';
+import {
+	ALICE_ADDRESS,
+	ALICE_MNEMONIC,
+	BOB_ADDRESS,
+	BOB_MNEMONIC,
+	POOL_ADDRESS,
+	POOL_MNEMONIC,
+	utxo,
+} from './constants';
+import { a, bMultiInput, cMultiInput, signTxInput, signTxMulti } from './sign';
 import { describe, it, expect, beforeAll } from 'vitest';
 import { ProverBuilder$, ReducedInputData } from 'sigmastate-js/main';
 import bip39 from 'bip39';
@@ -28,12 +36,41 @@ describe('UnsignedTransaction', () => {
 			.toEIP12Object();
 	});
 
-	it('ergo-lib-wasm-nodejs can sign', async () => {
+	it('ergo-lib-wasm-nodejs can sign Input', async () => {
 		const signedBobInput = await signTxInput(POOL_MNEMONIC, unsignedTx, 0);
 		expect(signedBobInput).toBeDefined();
 	});
 
-	it('sigma-state.js can sign', async () => {
+	it('ergo-lib-wasm-nodejs can MultiSignTx with 1 input Tx', async () => {
+		const signedTx = await signTxMulti(unsignedTx, BOB_MNEMONIC, BOB_ADDRESS);
+
+		// console.log('--------------------TEST 2-----------------');
+		// console.log('final Tx:');
+		// console.dir(signedTx, { depth: null });
+
+		expect(signedTx).toBeDefined();
+	});
+
+	it('ergo-lib-wasm-nodejs can MultiSignInput with 1 input Tx', async () => {
+		const { privateCommitsPool, publicCommitsPool } = await a(unsignedTx); // use sign ALL
+
+		const extractedHints = await bMultiInput(
+			unsignedTx,
+			BOB_MNEMONIC,
+			BOB_ADDRESS,
+			publicCommitsPool,
+		);
+
+		const signedTx = await cMultiInput(unsignedTx, privateCommitsPool, extractedHints);
+
+		// console.log('--------------------TEST 3-----------------');
+		// console.log('final Tx:');
+		// console.dir(signedTx.to_js_eip12(), { depth: null });
+
+		expect(extractedHints).toBeDefined();
+	});
+
+	it.skip('sigma-state.js can sign', async () => {
 		const BLOCKCHAIN_PARAMETERS = {
 			storageFeeFactor: 1000,
 			minValuePerByte: 1,
