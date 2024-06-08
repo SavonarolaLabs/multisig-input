@@ -66,7 +66,7 @@ describe('UnsignedTransaction', () => {
 			softForkVotesCollected: 50,
 			blockVersion: info.params.blockVersion,
 		};
-		const buffer = await bip39.mnemonicToSeed(ALICE_MNEMONIC);
+		const buffer = await bip39.mnemonicToSeed(POOL_MNEMONIC);
 		const mnemonicPhrase = buffer.toString('hex');
 
 		const builder = ProverBuilder$.create(BLOCKCHAIN_PARAMETERS, network).withMnemonic(
@@ -76,11 +76,11 @@ describe('UnsignedTransaction', () => {
 
 		const prover = builder.build();
 
-		const xHeaders = jsonHeaders.map(sigmaJsHeader).reverse();
+		const xHeaders = jsonHeaders.map(sigmaJsHeader);
 		const stateCtx = {
 			sigmaLastHeaders: xHeaders,
 			previousStateDigest: xHeaders[0].stateRoot.digest,
-			sigmaPreHeader: xHeaders[0],
+			sigmaPreHeader: xHeaders[1],
 		};
 
 		const data: ReducedInputData = prover.reduceTransactionInput(
