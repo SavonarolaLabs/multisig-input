@@ -33,7 +33,7 @@ describe('UnsignedTransaction', () => {
 		expect(signedBobInput).toBeDefined();
 	});
 
-	it('sigma-state.js can sign', async () => {
+	it('sigmastate.js can reduceTransactionInput', async () => {
 		//https://api.ergoplatform.com/api/v1/info
 		const info = {
 			lastBlockId: '5b9b19ac028c6956b4cdf8ec75227934b8134ff3635ed3aceac8a8bf20788dce',
@@ -92,6 +92,7 @@ describe('UnsignedTransaction', () => {
 			[],
 			0,
 		);
+		console.log(data)
 		expect(data).toBeDefined();
 	});
 });
