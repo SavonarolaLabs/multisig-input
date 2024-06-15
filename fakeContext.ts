@@ -1,3 +1,10 @@
+import {
+	BlockHeader,
+	BlockHeaders,
+	ErgoStateContext,
+	Parameters,
+	PreHeader,
+} from 'ergo-lib-wasm-nodejs';
 import { AvlTree$, GroupElement$ } from 'sigmastate-js/main';
 
 export function sigmaJsHeader(header: any) {
@@ -456,8 +463,8 @@ export const headers = [
       }`,
 ];
 
-export const fakeContext = (wasm: any) => {
-	const blockHeaders = wasm.BlockHeaders.from_json(headers);
-	const preHeader = wasm.PreHeader.from_block_header(wasm.BlockHeader.from_json(headers[0]));
-	return new wasm.ErgoStateContext(preHeader, blockHeaders);
-};
+export function fakeContext() {
+	const blockHeaders = BlockHeaders.from_json(headers);
+	const preHeader = PreHeader.from_block_header(BlockHeader.from_json(headers[0]));
+	return new ErgoStateContext(preHeader, blockHeaders, Parameters.default_parameters());
+}

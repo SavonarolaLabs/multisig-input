@@ -1,26 +1,27 @@
 {
-  "name": "multisig-input",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "vitest sign.test.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.13.0",
-    "vitest": "^1.6.0"
-  },
-  "dependencies": {
-    "@fleet-sdk/common": "^0.3.4",
-    "@fleet-sdk/core": "^0.3.4",
-    "bip32": "^4.0.0",
-    "bip39": "^3.1.0",
-    "ergo-lib-wasm-nodejs": "^0.26.0",
-    "sigmastate-js": "^0.4.5",
-    "tiny-secp256k1": "^2.2.3",
-    "vite-tsconfig-paths": "^4.3.2"
-  }
+	"name": "multisig-input",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "vitest sign.test.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^20.13.0",
+		"vitest": "^1.6.0"
+	},
+	"dependencies": {
+		"@fleet-sdk/common": "^0.3.4",
+		"@fleet-sdk/compiler": "^0.4.2",
+		"@fleet-sdk/core": "^0.3.4",
+		"bip32": "^4.0.0",
+		"bip39": "^3.1.0",
+		"ergo-lib-wasm-nodejs": "0.28.0-alpha-03551ca",
+		"sigmastate-js": "^0.4.5",
+		"tiny-secp256k1": "^2.2.3",
+		"vite-tsconfig-paths": "^4.3.2"
+	}
 }
