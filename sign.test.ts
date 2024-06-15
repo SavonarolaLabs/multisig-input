@@ -1,4 +1,4 @@
-import { ALICE_MNEMONIC, BOB_ADDRESS, BOB_MNEMONIC, POOL_ADDRESS, POOL_MNEMONIC, utxo } from './constants';
+import { ALICE_ADDRESS, ALICE_MNEMONIC, BOB_ADDRESS, BOB_MNEMONIC, POOL_ADDRESS, POOL_MNEMONIC, utxo } from './constants';
 import {
 	signTxMultiStep1,
 	arrayToProposition,
@@ -78,10 +78,26 @@ describe('ergo-lib-wasm-nodejs', () => {
 			.build()
 			.toEIP12Object();
 
+		
+
+		const oTemp = new OutputBuilder(
+			SAFE_MIN_BOX_VALUE+1n,
+			ALICE_ADDRESS,
+		)
+		const tempTX = new TransactionBuilder(height)
+			.from(utxo[0])
+			.to(oTemp)
+			.sendChangeTo(BOB_ADDRESS)
+			.payFee(SAFE_MIN_BOX_VALUE)
+			.build()
+			.toEIP12Object();
+		
+		const signedTx2 = await signTx(tempTX, POOL_MNEMONIC);
+		expect(signedTx).toBeDefined();
 
 		mixedWithdrawUTx = new TransactionBuilder(height)
-			.configureSelector((selector)=> selector.ensureInclusion([depositBox, utxo[0]].map(b=>b.boxId)))
-			.from([depositBox, utxo[0]])
+			.configureSelector((selector)=> selector.ensureInclusion([depositBox, signedTx2.outputs[0]].map(b=>b.boxId)))
+			.from([depositBox, signedTx2.outputs[0]])
 			.sendChangeTo(POOL_ADDRESS)
 			.payFee(SAFE_MIN_BOX_VALUE)
 			.build()
@@ -145,6 +161,18 @@ describe('ergo-lib-wasm-nodejs', () => {
 	});
 
 	it('can sign MIXED multisig by SignInput', async () => {
+		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(ErgoAddress.fromBase58(ALICE_ADDRESS).ergoTree)
+		const proverAlice = await getProver(ALICE_MNEMONIC);
+
+		const signedInput1 = proverAlice.sign_tx_input(
+			1,
+			fakeContext(),
+			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
+			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
+			ErgoBoxes.empty(),
+		);
+		expect(1).toBe(2)
+
 		expect(mixedWithdrawUTx.inputs.length).toBe(2)
 		const { privateCommitsPool, publicCommitsPool } = await signTxMultiStep1(mixedWithdrawUTx);
 		expect(publicCommitsPool).toBeDefined();
@@ -158,7 +186,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 		);
 
 		const unsigned_tx = UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx));
-		const tx = Transaction.from_unsigned_tx(unsigned_tx, [getProof(sInput0)]);
+		const tx = Transaction.from_unsigned_tx(unsigned_tx, [getProof(sInput0),getProof(sInput0)]);
 		const hUser = ErgoAddress.fromBase58(BOB_ADDRESS).ergoTree.slice(6);
 
 		let extractedHints = extract_hints(
@@ -169,7 +197,6 @@ describe('ergo-lib-wasm-nodejs', () => {
 			arrayToProposition([hUser]),
 			arrayToProposition([]),
 		).to_json();
-
 		const signedInput0 = await signInputMultiStep3(
 			mixedWithdrawUTx,
 			privateCommitsPool,
@@ -177,15 +204,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 			0,
 		);
 
-		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(ErgoAddress.fromBase58(POOL_ADDRESS).ergoTree)
-		const proverPool = await getProver(POOL_MNEMONIC);
-		const signedInput1 = proverPool.sign_tx_input(
-			1,
-			fakeContext(),
-			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
-			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
-			ErgoBoxes.empty(),
-		);
+
 
 		const utx = UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx));
 		const signedTx = Transaction.from_unsigned_tx(utx, [getProof(signedInput0), getProof(signedInput1)]);
