@@ -2,12 +2,14 @@ import { fakeContext } from './fakeContext';
 import {
 	ErgoBox,
 	ErgoBoxes,
+	Input,
 	Propositions,
 	ReducedTransaction,
 	Transaction,
 	TransactionHintsBag,
 	UnsignedTransaction,
 	extract_hints,
+	validate_tx,
 	verify_tx_input_proof,
 } from 'ergo-lib-wasm-nodejs';
 import { ErgoAddress } from '@fleet-sdk/core';
@@ -45,6 +47,9 @@ export async function a(unsignedTx: EIP12UnsignedTransaction): Promise<any> {
 
 	return { privateCommitsPool, publicCommitsPool };
 }
+export async function extractHintsFromTx() {
+	return '';
+}
 
 export async function b(
 	unsignedTx: EIP12UnsignedTransaction,
@@ -78,6 +83,36 @@ export async function b(
 	return extractedHints;
 }
 
+export async function bInput(
+	unsignedTx: EIP12UnsignedTransaction,
+	userMnemonic: string,
+	userAddress: string,
+	publicCommits: JSONTransactionHintsBag,
+	index: number,
+): Promise<Input> {
+	const publicBag = TransactionHintsBag.from_json(JSON.stringify(publicCommits));
+	const proverAlice = await getProver(userMnemonic);
+	const reducedTx = reducedFromUnsignedTx(unsignedTx);
+	const initialCommitsAlice = proverAlice.generate_commitments_for_reduced_transaction(reducedTx);
+
+	const combinedHints = TransactionHintsBag.empty();
+
+	for (let i = 0; i < unsignedTx.inputs.length; i++) {
+		combinedHints.add_hints_for_input(i, initialCommitsAlice.all_hints_for_input(i));
+		combinedHints.add_hints_for_input(i, publicBag.all_hints_for_input(i));
+	}
+
+	const input = proverAlice.sign_tx_input_multi(
+		index,
+		fakeContext(),
+		UnsignedTransaction.from_json(JSON.stringify(unsignedTx)),
+		ErgoBoxes.from_boxes_json(unsignedTx.inputs),
+		ErgoBoxes.empty(),
+		combinedHints,
+	);
+	return input;
+}
+
 export async function c(
 	unsignedTx: EIP12UnsignedTransaction,
 	privateCommitsPool: JSONTransactionHintsBag,
@@ -102,6 +137,41 @@ export async function c(
 	);
 
 	return signedTx;
+}
+
+export async function cInput(
+	unsignedTx: EIP12UnsignedTransaction,
+	privateCommitsPool: JSONTransactionHintsBag,
+	hints: JSONTransactionHintsBag,
+	index: number,
+) {
+	const hintsForBobSign = privateCommitsPool;
+
+	for (var row in hintsForBobSign.publicHints) {
+		for (var i = 0; i < hints.publicHints[row].length; i++) {
+			hintsForBobSign.publicHints[row].push(hints.publicHints[row][i]);
+		}
+		for (var i = 0; i < hints.secretHints[row].length; i++) {
+			hintsForBobSign.secretHints[row].push(hints.secretHints[row][i]);
+		}
+	}
+	const convertedHintsForBobSign = TransactionHintsBag.from_json(JSON.stringify(hintsForBobSign));
+
+	const proverBob = await getProver(POOL_MNEMONIC);
+	// let signedTx = proverBob.sign_reduced_transaction_multi(
+	// 	reducedFromUnsignedTx(unsignedTx),
+	// 	convertedHintsForBobSign
+	// );
+	const input = proverBob.sign_tx_input_multi(
+		index,
+		fakeContext(),
+		UnsignedTransaction.from_json(JSON.stringify(unsignedTx)),
+		ErgoBoxes.from_boxes_json(unsignedTx.inputs),
+		ErgoBoxes.empty(),
+		convertedHintsForBobSign,
+	);
+
+	return input;
 }
 
 function reducedFromUnsignedTx(unsignedTx: EIP12UnsignedTransaction) {
@@ -131,7 +201,13 @@ export function verifyInput(
 	return verified;
 }
 
-export function validateTx() {}
+export function validateTx(signedTx: SignedTransaction, unsignedTx: EIP12UnsignedTransaction) {
+	let context = fakeContext();
+	let tx = Transaction.from_json(JSON.stringify(signedTx));
+	const inputBoxes = ErgoBoxes.from_boxes_json(unsignedTx.inputs);
+	const dataBoxes = ErgoBoxes.empty();
+	validate_tx(tx, context, inputBoxes, dataBoxes);
+}
 
 export async function signTxMulti(
 	unsignedTx: EIP12UnsignedTransaction,
@@ -170,7 +246,7 @@ export async function signTxInput(
 	return signedInput;
 }
 
-function arrayToProposition(input: Array<string>): wasm.Propositions {
+export function arrayToProposition(input: Array<string>): wasm.Propositions {
 	const output = new Propositions();
 	input.forEach(pk => {
 		const proposition = Uint8Array.from(Buffer.from('cd' + pk, 'hex'));
