@@ -161,17 +161,6 @@ describe('ergo-lib-wasm-nodejs', () => {
 	});
 
 	it('can sign MIXED multisig by SignInput', async () => {
-		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(ErgoAddress.fromBase58(ALICE_ADDRESS).ergoTree)
-		const proverAlice = await getProver(ALICE_MNEMONIC);
-
-		const signedInput1 = proverAlice.sign_tx_input(
-			1,
-			fakeContext(),
-			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
-			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
-			ErgoBoxes.empty(),
-		);
-		expect(1).toBe(2)
 
 		expect(mixedWithdrawUTx.inputs.length).toBe(2)
 		const { privateCommitsPool, publicCommitsPool } = await signTxMultiStep1(mixedWithdrawUTx);
@@ -205,6 +194,17 @@ describe('ergo-lib-wasm-nodejs', () => {
 		);
 
 
+		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(ErgoAddress.fromBase58(ALICE_ADDRESS).ergoTree)
+		const proverAlice = await getProver(ALICE_MNEMONIC);
+
+		const signedInput1 = proverAlice.sign_tx_input(
+			1,
+			fakeContext(),
+			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
+			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
+			ErgoBoxes.empty(),
+		);
+		expect(1).toBe(2)
 
 		const utx = UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx));
 		const signedTx = Transaction.from_unsigned_tx(utx, [getProof(signedInput0), getProof(signedInput1)]);
