@@ -19,6 +19,7 @@ import {
 	verifyInput,
 	compileContract,
 	getProver,
+	signTxInput,
 } from './sign';
 import { describe, it, expect, beforeAll } from 'vitest';
 import { fakeContext } from 'fakeContext';
@@ -111,7 +112,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 			.toEIP12Object();
 	});
 
-	it('can sign simple multisig', async () => {
+	it('can sign simple multisig tx', async () => {
 		const withdrawTx = await signTxMulti(withdrawUTx, BOB_MNEMONIC, BOB_ADDRESS);
 		expect(withdrawTx).toBeDefined();
 
@@ -124,7 +125,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 		).not.toThrowError();
 	});
 
-	it('can sign simple multisig by SignInput', async () => {
+	it('can sign simple multisig input', async () => {
 		const { privateCommitsPool, publicCommitsPool } = await signTxMultiStep1(withdrawUTx);
 		expect(publicCommitsPool).toBeDefined();
 
@@ -167,7 +168,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 		).not.toThrowError();
 	});
 
-	it('can sign MIXED multisig by SignInput', async () => {
+	it('can sign multisig input + input', async () => {
 		expect(mixedWithdrawUTx.inputs.length).toBe(2);
 		const { privateCommitsPool, publicCommitsPool } = await signTxMultiStep1(mixedWithdrawUTx);
 		expect(publicCommitsPool).toBeDefined();
@@ -209,22 +210,13 @@ describe('ergo-lib-wasm-nodejs', () => {
 			getProof(signedInput0),
 		]);
 
-		let context = fakeContext();
 		const inputBoxes = ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs);
 		const dataBoxes = ErgoBoxes.empty();
 
-		//console.log(mixedWithdrawUTx.inputs);
-		let verified = verify_tx_input_proof(0, context, tx2, inputBoxes, dataBoxes);
+		let verified = verify_tx_input_proof(0, fakeContext(), tx2, inputBoxes, dataBoxes);
 		expect(verified, 'index 0 proof').toBe(true);
 
-		const proverAlice = await getProver(ALICE_MNEMONIC);
-		const signedInput1 = proverAlice.sign_tx_input(
-			1,
-			fakeContext(),
-			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
-			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
-			ErgoBoxes.empty(),
-		);
+		const signedInput1 = await signTxInput(mixedWithdrawUTx, ALICE_MNEMONIC, 1);
 
 		const unsigned_tx3 = UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx));
 		const tx3 = Transaction.from_unsigned_tx(unsigned_tx3, [
@@ -232,7 +224,7 @@ describe('ergo-lib-wasm-nodejs', () => {
 			getProof(signedInput1),
 		]);
 
-		let verified1 = verify_tx_input_proof(1, context, tx3, inputBoxes, dataBoxes);
+		let verified1 = verify_tx_input_proof(1, fakeContext(), tx3, inputBoxes, dataBoxes);
 		expect(verified1, 'index 1 proof').toBe(true);
 
 		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(
