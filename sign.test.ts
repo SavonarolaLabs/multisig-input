@@ -28,6 +28,7 @@ import {
 	extract_hints,
 	Input,
 	Transaction,
+	TransactionHintsBag,
 	UnsignedTransaction,
 } from 'ergo-lib-wasm-nodejs';
 
@@ -197,12 +198,16 @@ describe('ergo-lib-wasm-nodejs', () => {
 		expect(mixedWithdrawUTx.inputs.at(1)?.ergoTree).toBe(ErgoAddress.fromBase58(ALICE_ADDRESS).ergoTree)
 		const proverAlice = await getProver(ALICE_MNEMONIC);
 
-		const signedInput1 = proverAlice.sign_tx_input(
+		const aliceCommitments = proverAlice.generate_commitments(fakeContext(),
+		UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
+		ErgoBoxes.empty())
+		const signedInput1 = proverAlice.sign_tx_input_multi(
 			1,
 			fakeContext(),
 			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
 			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
 			ErgoBoxes.empty(),
+			aliceCommitments
 		);
 		expect(1).toBe(2)
 
