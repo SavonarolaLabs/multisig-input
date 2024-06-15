@@ -12,13 +12,14 @@ import {
 	validate_tx,
 	verify_tx_input_proof,
 } from 'ergo-lib-wasm-nodejs';
-import { ErgoAddress } from '@fleet-sdk/core';
+import { ErgoAddress, Network } from '@fleet-sdk/core';
 import { mnemonicToSeedSync } from 'bip39';
 import * as wasm from 'ergo-lib-wasm-nodejs';
 import type { EIP12UnsignedTransaction, SignedTransaction } from '@fleet-sdk/common';
 import { POOL_MNEMONIC, POOL_ADDRESS } from './constants';
 import BIP32Factory from 'bip32';
 import * as ecc from 'tiny-secp256k1';
+import { compile } from '@fleet-sdk/compiler';
 
 type JSONTransactionHintsBag = any;
 
@@ -36,7 +37,7 @@ function _removeSecrets(privateCommitments: JSONTransactionHintsBag, address: st
 	return copy;
 }
 
-export async function a(unsignedTx: EIP12UnsignedTransaction): Promise<any> {
+export async function signTxMultiStep1(unsignedTx: EIP12UnsignedTransaction): Promise<any> {
 	const proverBob = await getProver(POOL_MNEMONIC);
 	let reducedTx = reducedFromUnsignedTx(unsignedTx);
 	const privateCommitsPool = proverBob
@@ -47,11 +48,12 @@ export async function a(unsignedTx: EIP12UnsignedTransaction): Promise<any> {
 
 	return { privateCommitsPool, publicCommitsPool };
 }
+
 export async function extractHintsFromTx() {
 	return '';
 }
 
-export async function b(
+export async function signTxMultiStep2(
 	unsignedTx: EIP12UnsignedTransaction,
 	userMnemonic: string,
 	userAddress: string,
@@ -83,7 +85,7 @@ export async function b(
 	return extractedHints;
 }
 
-export async function bInput(
+export async function signInputMultiStep2(
 	unsignedTx: EIP12UnsignedTransaction,
 	userMnemonic: string,
 	userAddress: string,
@@ -113,7 +115,7 @@ export async function bInput(
 	return input;
 }
 
-export async function c(
+export async function signTxMultiStep3(
 	unsignedTx: EIP12UnsignedTransaction,
 	privateCommitsPool: JSONTransactionHintsBag,
 	hints: JSONTransactionHintsBag,
@@ -139,7 +141,7 @@ export async function c(
 	return signedTx;
 }
 
-export async function cInput(
+export async function signInputMultiStep3(
 	unsignedTx: EIP12UnsignedTransaction,
 	privateCommitsPool: JSONTransactionHintsBag,
 	hints: JSONTransactionHintsBag,
@@ -214,11 +216,16 @@ export async function signTxMulti(
 	userMnemonic: string,
 	userAddress: string,
 ): Promise<SignedTransaction> {
-	const { privateCommitsPool, publicCommitsPool } = await a(unsignedTx);
+	const { privateCommitsPool, publicCommitsPool } = await signTxMultiStep1(unsignedTx);
 
-	const extractedHints = await b(unsignedTx, userMnemonic, userAddress, publicCommitsPool);
+	const extractedHints = await signTxMultiStep2(
+		unsignedTx,
+		userMnemonic,
+		userAddress,
+		publicCommitsPool,
+	);
 
-	const signedTx = await c(unsignedTx, privateCommitsPool, extractedHints);
+	const signedTx = await signTxMultiStep3(unsignedTx, privateCommitsPool, extractedHints);
 
 	return signedTx.to_js_eip12();
 }
@@ -288,6 +295,28 @@ export async function signTx(
 		ErgoBoxes.empty(),
 	);
 	return signedTx.to_js_eip12();
+}
+
+export function hexToUint8Array(str: string): Uint8Array {
+	const utf8: string = unescape(encodeURIComponent(str));
+	const array = new Uint8Array(utf8.length);
+	for (let i = 0; i < utf8.length; i++) {
+		array[i] = utf8.charCodeAt(i);
+	}
+	return array;
+}
+
+export function getProof(input: Input): Uint8Array {
+	return hexToUint8Array(input.spending_proof().to_json());
+}
+
+export function compileContract(contract: string, map: any) {
+	const tree = compile(contract, {
+		version: 0,
+		includeSize: false,
+		map,
+	});
+	return tree.toAddress(Network.Mainnet).toString();
 }
 
 const RootPathWithoutIndex = "m/44'/429'/0'/0";
