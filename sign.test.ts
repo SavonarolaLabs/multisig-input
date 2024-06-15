@@ -201,13 +201,12 @@ describe('ergo-lib-wasm-nodejs', () => {
 		const aliceCommitments = proverAlice.generate_commitments(fakeContext(),
 		UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
 		ErgoBoxes.empty())
-		const signedInput1 = proverAlice.sign_tx_input_multi(
+		const signedInput1 = proverAlice.sign_tx_input(
 			1,
 			fakeContext(),
 			UnsignedTransaction.from_json(JSON.stringify(mixedWithdrawUTx)),
 			ErgoBoxes.from_boxes_json(mixedWithdrawUTx.inputs),
 			ErgoBoxes.empty(),
-			aliceCommitments
 		);
 		expect(1).toBe(2)
 
