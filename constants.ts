@@ -1,5 +1,5 @@
 export const ALICE_MNEMONIC =
-	'swim current hurry local faint obey scare vessel inch chest lock paddle since world agree1';
+	'swim current hurry local faint obey scare vessel inch chest lock paddle since world agree';
 export const BOB_MNEMONIC =
 	'grit sorry wise village fork movie kingdom trend jar grant icon equal vessel case nominee';
 export const POOL_MNEMONIC =
