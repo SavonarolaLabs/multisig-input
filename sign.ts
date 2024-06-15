@@ -260,7 +260,7 @@ export function arrayToProposition(input: Array<string>): Propositions {
 	return output;
 }
 
-async function getProver(mnemonic: string): Promise<Wallet> {
+export async function getProver(mnemonic: string): Promise<Wallet> {
 	const secretKeys = new SecretKeys();
 	secretKeys.add(getWalletAddressSecret(mnemonic));
 	return Wallet.from_secrets(secretKeys);
@@ -295,17 +295,8 @@ export async function signTx(
 	return signedTx.to_js_eip12();
 }
 
-export function hexToUint8Array(str: string): Uint8Array {
-	const utf8: string = unescape(encodeURIComponent(str));
-	const array = new Uint8Array(utf8.length);
-	for (let i = 0; i < utf8.length; i++) {
-		array[i] = utf8.charCodeAt(i);
-	}
-	return array;
-}
-
 export function getProof(input: Input): Uint8Array {
-	return hexToUint8Array(input.spending_proof().to_json());
+	return input.spending_proof().proof();
 }
 
 export function compileContract(contract: string, map: any) {
